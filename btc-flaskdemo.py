@@ -1,6 +1,5 @@
 from flask import Flask
 import requests
-import json
 
 app = Flask(__name__)
 
@@ -10,10 +9,16 @@ def btc():
     r = requests.get('https://api.coindesk.com/v1/bpi/currentprice.json')
     return('The Current Price of Bitcoin: $' + r.json()['bpi']['USD']['rate'])
 
+
+@app.route("/history")
 def btc_history():
-    mylist = requests.get('https://api.coindesk.com/v1/bpi/historical/close.json?start=2017-12-01&end=2017-12-29')
-    for x in mylist:
-        return(x)
+    r = requests.get(
+        'https://api.coindesk.com/v1/bpi/historical/close.json?start=2017-12-0')
+    # dictionary
+    history = r.json()['bpi']
+    # render #1
+    return '<br>'.join(['Date {}, Price {}'.format(i, history.get(i)) for i in history])
+
 
 if __name__ == "__main__":
     app.run()
